@@ -4,6 +4,11 @@ from __future__ import print_function
 import cv2 as cv
 import argparse
 import rospy
+import numpy as np
+from cv_bridge import CvBridge
+
+def img_cb(msg):
+	image = bridge.imgmsg_to_cv2(msg)
 
 #rospy.init_node ('cv_node')
 #rospy.spin()
@@ -23,7 +28,7 @@ def detectAndDisplay(frame):
             radius = int(round((w2 + h2)*0.25))
             frame = cv.circle(frame, eye_center, radius, (255, 0, 0 ), 4)
     cv.imshow('Capture - Face detection', frame)
-parser = argparse.ArgumentParser(description='Code for Cascade Classifier tutorial.')
+'''parser = argparse.ArgumentParser(description='Code for Cascade Classifier tutorial.')
 parser.add_argument('--face_cascade', help='Path to face cascade.', default='/usr/share/opencv4/haarcascades/haarcascade_frontalface_alt.xml')
 parser.add_argument('--eyes_cascade', help='Path to eyes cascade.', default='/usr/share/opencv4/haarcascades/haarcascade_eye_tree_eyeglasses.xml')
 parser.add_argument('--camera', help='Camera divide number.', type=int, default=0)
@@ -52,4 +57,15 @@ while True:
         break
     detectAndDisplay(frame)
     if cv.waitKey(10) == 27:
-        break
+        break'''
+        
+if __name__ == '__main__' :
+	rp = rospkg.RosPack()
+	path = rp.get_path("learning_cv")
+	face_cascade = cv2.CascadeClassifier(path + '/config/lbpcascade_frontalface_improved.xml)
+	bridge = CvBridge()
+    rospy.init_node('face_tracker', anonymous=True)
+    sub = rospy.Subscriber("image_raw", Image, callback)
+    pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+    rospy.spin()
+	
